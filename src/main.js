@@ -1,3 +1,10 @@
+/*
+ Copyright: 2019 Randy Chang
+ Author: Randy Chang
+
+ Converts Array Buffer to Base64 String and vice versa
+*/
+
 const binary_to_b64_map = [
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
     'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
@@ -9,73 +16,16 @@ const binary_to_b64_map = [
     '/', '='
 ];
 const b64_to_binary_map = {
-    '0': 52,
-    '1': 53,
-    '2': 54,
-    '3': 55,
-    '4': 56,
-    '5': 57,
-    '6': 58,
-    '7': 59,
-    '8': 60,
-    '9': 61,
-    A: 0,
-    B: 1,
-    C: 2,
-    D: 3,
-    E: 4,
-    F: 5,
-    G: 6,
-    H: 7,
-    I: 8,
-    J: 9,
-    K: 10,
-    L: 11,
-    M: 12,
-    N: 13,
-    O: 14,
-    P: 15,
-    Q: 16,
-    R: 17,
-    S: 18,
-    T: 19,
-    U: 20,
-    V: 21,
-    W: 22,
-    X: 23,
-    Y: 24,
-    Z: 25,
-    a: 26,
-    b: 27,
-    c: 28,
-    d: 29,
-    e: 30,
-    f: 31,
-    g: 32,
-    h: 33,
-    i: 34,
-    j: 35,
-    k: 36,
-    l: 37,
-    m: 38,
-    n: 39,
-    o: 40,
-    p: 41,
-    q: 42,
-    r: 43,
-    s: 44,
-    t: 45,
-    u: 46,
-    v: 47,
-    w: 48,
-    x: 49,
-    y: 50,
-    z: 51,
-    '+': 62,
-    '/': 63,
+    '0': 52, '1': 53, '2': 54, '3': 55, '4': 56, '5': 57, '6': 58, '7': 59, '8': 60, '9': 61,
+    A: 0, B: 1, C: 2, D: 3, E: 4, F: 5, G: 6, H: 7, I: 8, J: 9, K: 10, L: 11, M: 12, N: 13, O: 14,
+    P: 15, Q: 16, R: 17, S: 18, T: 19, U: 20, V: 21, W: 22, X: 23, Y: 24, Z: 25, a: 26, b: 27,
+    c: 28, d: 29, e: 30, f: 31, g: 32, h: 33, i: 34, j: 35, k: 36, l: 37, m: 38, n: 39, o: 40,
+    p: 41, q: 42, r: 43, s: 44, t: 45, u: 46, v: 47, w: 48, x: 49, y: 50, z: 51, '+': 62, '/': 63,
     '=': 64
 };
 
+//generates an array iterator that returns 3 elements at a time. Use to loop through the Uint8Array Array Buffer
+// to be converted to Base64.  (binary array buffer) 8bits * 3 = 6bits * 4 (base64 representation)
 const generateTripleIterator = (arr) => {
     return {
         *[Symbol.iterator]() {
@@ -94,6 +44,8 @@ const generateTripleIterator = (arr) => {
     };
 };
 
+//generates an array iterator that returns 4 elements at a time.  Use to loop through
+// Base64 string because Base64 string is multiples of 4 characters.
 const generateQuadrupleIterator = (arr) => {
     return {
         *[Symbol.iterator]() {
@@ -104,6 +56,7 @@ const generateQuadrupleIterator = (arr) => {
     };
 };
 
+// Converts a triple of 8 bits into a quadruple of 6 bits.  use to convert binary to base64 representation
 const tripleConvert = (triple) => {
     let [first, second, third] = triple;
     let binary = null, a = null, b = null, c = null, d = null;
@@ -130,6 +83,7 @@ const tripleConvert = (triple) => {
     return [a, b, c, d];
 };
 
+// Converts a quadruple of 6 bits into a triple of 8 bits.  use to convert base64 representation into binary
 const quadrupleConvert = (quadruple) => {
     let [a, b, c, d] = quadruple;
     let binary = null, first = 0, second = 0, third = 0;
@@ -155,7 +109,8 @@ const quadrupleConvert = (quadruple) => {
     return [first, second, third];
 };
 
-exports.ab2b64 = async (buffer) => {
+// Convert 8Bits Array Buffer to Base64 string
+const ab2b64 = (buffer) => {
     const b64strArray = [];
     const view = new Uint8Array(buffer);
     let iterator = generateTripleIterator(view);
@@ -165,7 +120,8 @@ exports.ab2b64 = async (buffer) => {
     return b64strArray.map(b64CharCodePoint => binary_to_b64_map[b64CharCodePoint]).join("");
 };
 
-exports.b642ab = async (b64str) => {
+// Convert Base64 String to 8Bits Array Buffer
+const b642ab = (b64str) => {
     let buffer = new ArrayBuffer((b64str.length / 4) * 3);
     const view = new Uint8Array(buffer);
     let iterator = generateQuadrupleIterator(b64str.split("").map(b64char => b64_to_binary_map[b64char]));
@@ -178,3 +134,16 @@ exports.b642ab = async (b64str) => {
     }
     return buffer;
 };
+
+//Asynchronous methods
+exports.ab2b64Async = async (buffer) => {
+    return ab2b64(buffer);
+};
+
+exports.b642abAsync = async (b64str) => {
+    return b642ab(b64str);
+};
+
+//Synchronous methods
+exports.ab2b64 = ab2b64;
+exports.b642ab = b642ab;

@@ -1,12 +1,23 @@
 {
   "name": "arrayBuffer2Base64",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.9.0",
+  "description": "Convert ArrayBuffer to Base64 string and vice versa",
+  "main": "src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["Base64","ArrayBuffer","6bits","8bits"],
+  "homepage":"https://www.github.com/",
+  "author": {
+    "name":"Randy Chang",
+    "url":"https://www.randy-chang.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://www.github.com/"
+  },
+  "scripts": {
+    "test": "node test/test.js"
+  },
   "license": "ISC"
 }
