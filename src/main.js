@@ -86,7 +86,7 @@ const tripleConvert = (triple) => {
 // Converts a quadruple of 6 bits into a triple of 8 bits.  use to convert base64 representation into binary
 const quadrupleConvert = (quadruple) => {
     let [a, b, c, d] = quadruple;
-    let binary = null, first = 0, second = 0, third = 0;
+    let binary = null, first = null, second = null, third = null;
 
     if(c === 64 && d === 64) {
         //two padding
@@ -122,14 +122,23 @@ const ab2b64 = (buffer) => {
 
 // Convert Base64 String to 8Bits Array Buffer
 const b642ab = (b64str) => {
-    let buffer = new ArrayBuffer((b64str.length / 4) * 3);
+    let buffer_length = (b64str.length / 4) * 3;
+    if(b64str.slice(-2) === '==') {
+        buffer_length -= 2;
+    } else if(b64str.slice(-1) === '=') {
+        buffer_length -= 1;
+    }
+
+    let buffer = new ArrayBuffer(buffer_length);
     const view = new Uint8Array(buffer);
     let iterator = generateQuadrupleIterator(b64str.split("").map(b64char => b64_to_binary_map[b64char]));
     let byteIndex = 0;
     for(let quadruple of iterator) {
         quadrupleConvert(quadruple).forEach(byte => {
-            view[byteIndex] = byte;
-            byteIndex++;
+            if(byte != null) {
+                view[byteIndex] = byte;
+                byteIndex++;
+            }
         });
     }
     return buffer;

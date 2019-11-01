@@ -1,6 +1,6 @@
 {
   "name": "ab2b64",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Convert ArrayBuffer to Base64 string and vice versa",
   "main": "src/main.js",
   "scripts": {

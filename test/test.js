@@ -10,7 +10,7 @@ const str2ab = (str) => {
 
 const ab2str = (buffer) => {
     //removing null terminator at the end
-    return String.fromCodePoint.apply(null, new Uint16Array(buffer)).replace("\u0000","");
+    return String.fromCodePoint.apply(null, new Uint16Array(buffer));
 };
 
 const main_test = async () => {
@@ -30,6 +30,9 @@ const main_test = async () => {
     const testBuffer4 = await ab2b64.b642abAsync(b64test4);
     assert.equal(ab2str(testBuffer4), "Doofus Rick", "Base64 str conversion to Array Buffer failed");
 
+    const testBuffer5 = str2ab("Hello Randy");
+    const b64test5 = await ab2b64.ab2b64Async(testBuffer5);
+    assert.equal(ab2b64.b642ab(b64test5).byteLength, testBuffer5.byteLength);
 };
 
 main_test().then(() => console.log("All tests pass")).catch(err => console.log(err));
